@@ -56,12 +56,12 @@ class BossesController extends Controller
      * @param  int|null  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id = null)
+    public function show(Request $request, $id = null)
     {
         if ($id !== null) {
             $pokemon = $this->_getPokemon($id);
         } else {
-            $pokemon = $this->_getAllPokemon();
+            $pokemon = $this->_getAllPokemon($request);
         }
         
         return response()->json($pokemon);
@@ -78,13 +78,23 @@ class BossesController extends Controller
         return Boss::find($id);
     }
     
+    public function search(Request $request)
+    {
+        $data = $request->all();
+        return Boss::where('name', 'like', '%' . $data['name'] . '%')->paginate();
+    }
+    
     /**
      * Get all pokemon
      * @return \Illuminate\Database\Eloquent\Collection|\App\Boss[]
      */
-    private function _getAllPokemon()
+    private function _getAllPokemon(Request $request)
     {
-        return Boss::all();
+        if ($request->query('page')) {
+            return Boss::paginate(3);
+        } else {
+            return Boss::all();
+        }
     }
 
     /**
@@ -100,6 +110,7 @@ class BossesController extends Controller
         
         Boss::find($id)->update($data);
         
-        return redirect()->route('bosses.get');
+        return 'Ok';
+//         return redirect()->route('bosses.get');
     }
 }

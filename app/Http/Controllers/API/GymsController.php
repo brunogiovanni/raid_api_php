@@ -55,7 +55,8 @@ class GymsController extends Controller
     {
         Gym::create($request->all());
         
-        return redirect()->route('raids.get');
+        return 'Ok';
+//         return redirect()->route('raids.get');
     }
     
     /**
@@ -69,6 +70,7 @@ class GymsController extends Controller
     {
         Gym::find($id)->update($request->all());
         
-        return redirect()->route('raids.get');
+        return 'Ok';
+//         return redirect()->route('raids.get');
     }
 }
