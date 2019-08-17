@@ -21,7 +21,7 @@ Route::namespace('API')->group(function () {
     Route::post('/register', 'PassportController@register');
     Route::post('/login', 'PassportController@login');
     
-    Route::get('/bosses/sincronizar', 'BossesController@getFromAPI')->name('bosses')->middleware('auth:api');
+    Route::get('/bosses/sincronizar', 'BossesController@getFromAPI')->name('bosses');//->middleware('auth:api');
     Route::get('/bosses/search', 'BossesController@search');
     Route::get('/bosses/{id?}', ['as' => 'bosses.get', 'uses' => 'BossesController@show']);
     Route::put('/bosses/{id}', 'BossesController@update');

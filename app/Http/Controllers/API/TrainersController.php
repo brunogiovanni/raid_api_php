@@ -11,12 +11,12 @@ class TrainersController extends Controller
     /**
      * Get all or a specific trainer from db
      * 
-     * @param int|null $id
+     * @param string|null $nickname
      */
-    public function show($id = null)
+    public function show($nickname = null)
     {
-        if ($id !== null) {
-            $trainer = $this->_getTrainer($id);
+        if ($nickname !== null) {
+            $trainer = $this->_getTrainer($nickname);
         } else {
             $trainer = $this->_getAllTrainers();
         }
@@ -27,12 +27,12 @@ class TrainersController extends Controller
     /**
      * Get a specific trainer
      * 
-     * @param int $id
+     * @param string $nickname
      * @return \App\Trainer
      */
-    private function _getTrainer($id)
+    private function _getTrainer($nickname)
     {
-        return Trainer::find($id);
+        return Trainer::all()->firstWhere('nickname', '=', $nickname);
     }
     
     /**
@@ -62,12 +62,12 @@ class TrainersController extends Controller
      * Update a trainer
      * 
      * @param Request $request
-     * @param int $id
+     * @param string $nickname
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, $nickname)
     {
-        Trainer::find($id)->update($request->all());
+        Trainer::all()->firstWhere('nickname', '=', $nickname)->update($request->all());
         
         return redirect()->route('raids.get');
     }
