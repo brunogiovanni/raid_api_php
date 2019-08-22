@@ -67,8 +67,8 @@ class TrainersController extends Controller
      */
     public function update(Request $request, $nickname)
     {
-        Trainer::all()->firstWhere('nickname', '=', $nickname)->update($request->all());
-        
-        return redirect()->route('raids.get');
+        if (Trainer::all()->firstWhere('nickname', '=', $nickname)->update($request->all())) {
+            return Trainer::all()->firstWhere('nickname', '=', $nickname);
+        }
     }
 }

@@ -34,6 +34,7 @@ Route::namespace('API')->group(function () {
     Route::post('/raids/', 'RaidsController@add');
     Route::put('/raids/{id}', 'RaidsController@update');
     Route::post('/raids/{id}', 'RaidsController@addTrainerToRaid');
+    Route::delete('/raids/{id}/{nickname}', 'RaidsController@removeTrainerFromList');
     
     Route::get('/trainers/{id?}', ['as' => 'trainers.get', 'uses' => 'TrainersController@show']);
     Route::post('/trainers/', 'TrainersController@add');

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Raid;
+use App\Trainer;
 
 class RaidsController extends Controller
 {
@@ -76,21 +77,43 @@ class RaidsController extends Controller
      * Add a trainer to a existing raid list
      * 
      * @param Request $request
-     * @param int $id
+     * @param int $id Raid id
      * @return \Illuminate\Http\RedirectResponse
      */
     public function addTrainerToRaid(Request $request, $id)
     {
-        $raid = Raid::with(['trainers'])->find($id);
         $newTrainer = $request->all();
+        $trainer = Trainer::all()->firstWhere('nickname', '=', $newTrainer['nickname']);
+        $raid = Raid::with(['trainers'])->find($id);
         $trainersId = [];
-        foreach ($raid->trainers as $trainer) {
-            $trainersId[] = $trainer->id;
+        foreach ($raid->trainers as $trainerList) {
+            $trainersId[] = $trainerList->nickname;
         }
-        if (!in_array($newTrainer['id'], $trainersId)) {
-            $raid->trainers()->attach($newTrainer['id']);
+        if (!in_array($newTrainer['nickname'], $trainersId)) {
+            $raid->trainers()->attach($trainer);
         }
         
-        return redirect()->route('raids.get', $id);
+        return $this->_getRaid($id);
+    }
+
+    /**
+     * Remove a trainer to a existing raid list
+     * 
+     * @param Request $request
+     * @param int $id Raid id
+     * @param string $nickname
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function removeTrainerFromList(Request $request, $id, $nickname)
+    {
+        // $trainer = Trainer::all()->firstWhere('nickname', '=', $fromBody['nickname']);
+        $list = Raid::with(['trainers'])->find($id);
+        foreach ($list->trainers as $trainerList) {
+            if ($trainerList->nickname === $nickname) {
+                $list->trainers()->detach($trainerList->id);
+            }
+        }
+
+        return $this->_getRaid($id);
     }
 }
