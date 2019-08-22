@@ -14,7 +14,7 @@ class BossesController extends Controller
      */
     public function getFromAPI()
     {
-        $maxPokemon = 9;
+        $maxPokemon = 40;
         $uri = 'https://pokeapi.co/api/v2/pokemon/';
         $pokemons = [];
         for ($i = 1; $i <= $maxPokemon; $i++) {
@@ -23,7 +23,7 @@ class BossesController extends Controller
             $pokemons[$i] = json_decode(curl_exec($ch));
         }
         
-        $this->_save($pokemons);
+        return $this->_save($pokemons);
     }
     
     /**
@@ -47,7 +47,7 @@ class BossesController extends Controller
             }
         }
 
-        return redirect()->route('bosses.get');
+        return Boss::paginate(10);
     }
 
     /**
@@ -78,22 +78,28 @@ class BossesController extends Controller
         return Boss::find($id);
     }
     
+    /**
+     * Search for a given pokemon name
+     * 
+     * @param Request $request
+     * @return \App\Boss
+     */
     public function search(Request $request)
     {
         $data = $request->all();
-        return Boss::where('name', 'like', '%' . $data['name'] . '%')->paginate();
+        return Boss::where('name', 'like', '%' . $data['name'] . '%')->paginate(10);
     }
     
     /**
      * Get all pokemon
      * @return \Illuminate\Database\Eloquent\Collection|\App\Boss[]
      */
-    private function _getAllPokemon(Request $request)
+    private function _getAllPokemon(Request $request = null)
     {
         if ($request->query('page')) {
-            return Boss::paginate(3);
+            return Boss::paginate(10);
         } else {
-            return Boss::all();
+            return Boss::all()->where('in_raid', '=', TRUE);
         }
     }
 

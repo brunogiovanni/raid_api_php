@@ -19,7 +19,7 @@ class RaidsController extends Controller
         if ($id !== null) {
             $raid = $this->_getRaid($id);
         } else {
-            $raid = $this->_getAllGyms();
+            $raid = $this->_getAllRaids();
         }
         
         return response()->json($raid);
@@ -41,9 +41,9 @@ class RaidsController extends Controller
      *
      * @return \Illuminate\Database\Eloquent\Collection|\App\Raid[]
      */
-    private function _getAllGyms()
+    private function _getAllRaids()
     {
-        return Raid::with(['trainers', 'gym', 'boss'])->get();
+        return Raid::where('dataHora', '>=', date('Y-m-d H:i'))->with(['trainers', 'gym', 'boss'])->paginate(10);
     }
     
     /**

@@ -13,12 +13,12 @@ class GymsController extends Controller
      *
      * @param int|null $id
      */
-    public function show($id = null)
+    public function show(Request $request, $id = null)
     {
         if ($id !== null) {
             $gym = $this->_getGym($id);
         } else {
-            $gym = $this->_getAllGyms();
+            $gym = $this->_getAllGyms($request);
         }
         
         return response()->json($gym);
@@ -40,9 +40,25 @@ class GymsController extends Controller
      *
      * @return \Illuminate\Database\Eloquent\Collection|\App\Gym[]
      */
-    private function _getAllGyms()
+    private function _getAllGyms($request)
     {
-        return Gym::all();
+        if ($request->query('page')) {
+            return Gym::paginate(10);
+        } else {
+            return Gym::all();
+        }
+    }
+    
+    /**
+     * Search for a given gym name
+     * 
+     * @param Request $request
+     * @return \App\Gym
+     */
+    public function search(Request $request)
+    {
+        $data = $request->all();
+        return Gym::where('name', 'like', '%' . $data['name'] . '%')->paginate(10);
     }
     
     /**
